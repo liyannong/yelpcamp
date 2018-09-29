@@ -1,0 +1,26 @@
+<% include ../partials/header %>
+
+<div class = "container">
+    
+    <div class = "row">
+        <h1 style = "text-align: center;">Edit Comments</h1>
+        
+        <div style = "width: 30%; margin: 25px auto;">
+            <form action = "/campgrounds/<%= campground_id%>/comments/<%=comment._id%>?_method=PUT" method = "POST">
+                
+                <div class = "form-group">
+                    <input class = "form-control" type = "text" name = "comment[text]" value = "<%= comment.text%>">
+                </div>
+                <!-- the name attribute is used to send info to the app.post-->
+
+                <button class = "btn btn-lg btn-primary btn-block">Submit</button>
+            </form>
+            
+            <a href = "/campgrounds"> Back to campgrounds</a>
+            
+        </div>
+    </div>
+</div>
+
+
+<% include ../partials/footer %>

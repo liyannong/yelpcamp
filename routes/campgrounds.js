@@ -4,7 +4,9 @@ var    Campground  = require("../models/campground");
 var middleware = require("../middleware/index.js");
 
 var NodeGeocoder = require('node-geocoder');
- 
+
+//Each time you open c9, run this
+//export GEOCODER_API_KEY=AIzaSyB1JUlvPpnNIPCNhtwlFeTb-cm-shxxs4g 
 var options = {
   provider: 'google',
   httpAdapter: 'https',
@@ -18,21 +20,33 @@ var geocoder = NodeGeocoder(options);
 //CAMPGROUNDS ROUTES
 //==============================
 router.get("/", function(req, res){
-    
+    var noMatch;
+    if(req.query.search){
+        const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+        Campground.find({name:regex}, function(err, allCampgrounds){
+            if(err){
+                console.log(err);
+            }else{
+                if(allCampgrounds.length < 1)
+                    noMatch = "There is no mathing results. Please try again."
+                 //You have to add view engine to omit the suffix
+                 //The latter campgrounds is the data we sent in, which is the var above
+               res.render("campgrounds/index", {campgrounds : allCampgrounds, currentUser : req.user, noMatch: noMatch});  
+            }
+        });
+    }else{
     //Get all campgrounds from db
-    Campground.find({}, function(err, allCampgrounds){
-        
-        if(err){
-            console.log(err);
-        }else{
-             //You have to add view engine to omit the suffix
-             //The latter campgrounds is the data we sent in, which is the var above
-           res.render("campgrounds/index", {campgrounds : allCampgrounds, currentUser : req.user});  
-        }
-    });
-
-
- 
+        Campground.find({}, function(err, allCampgrounds){
+            if(err){
+                console.log(err);
+            }else{
+                 //You have to add view engine to omit the suffix
+                 //The latter campgrounds is the data we sent in, which is the var above
+               res.render("campgrounds/index", {campgrounds : allCampgrounds, currentUser : req.user, noMatch: noMatch});  
+            }
+        });
+    
+    }
 });
 
 //CREATE - add new campground to DB
@@ -47,7 +61,7 @@ router.post("/", middleware.isLoggedIn, function(req, res){
       username: req.user.username
   }
   geocoder.geocode(req.body.location, function (err, data) {
-    if (err || !data.length) {
+    if (err || data.status === 'ZERO_RESULTS') {
       req.flash('error', 'Invalid address');
       return res.redirect('back');
     }
@@ -146,6 +160,8 @@ router.delete("/:id",  middleware.checkCampgroundOwnership, function(req, res){
 });
 
 
-
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
 
 module.exports = router;

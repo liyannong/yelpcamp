@@ -18,7 +18,7 @@ router.get("/", function(req, res){
 //Show Register form
 router.get("/register", function(req, res){
     
-    res.render("register");
+    res.render("register", {page: 'register'});
     
 });
 
@@ -35,8 +35,8 @@ router.post("/register", function(req, res){
     
     User.register(newUser, req.body.password, function(err, user){
         if(err){
-            req.flash("error", err.message);
-            return res.redirect("/register");
+            console.log(err);
+            return res.render("register", {error : err.message});
         }
         passport.authenticate("local")(req, res, function(){
           req.flash("success", "Welcome to YelpCamp " + user.username);
@@ -48,7 +48,7 @@ router.post("/register", function(req, res){
 
 //Show Login Form
 router.get("/login", function(req,res){
-    res.render("login");
+    res.render("login", {page: 'login'});
 });
 
 //passport.authenticate works as middleware

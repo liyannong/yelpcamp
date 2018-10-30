@@ -31,7 +31,7 @@ router.get("/", function(req, res){
                     noMatch = "There is no mathing results. Please try again."
                  //You have to add view engine to omit the suffix
                  //The latter campgrounds is the data we sent in, which is the var above
-               res.render("campgrounds/index", {campgrounds : allCampgrounds, currentUser : req.user, noMatch: noMatch});  
+               res.render("campgrounds/index", {campgrounds : allCampgrounds, currentUser : req.user, noMatch: noMatch, page: campgrounds});  
             }
         });
     }else{
@@ -42,7 +42,7 @@ router.get("/", function(req, res){
             }else{
                  //You have to add view engine to omit the suffix
                  //The latter campgrounds is the data we sent in, which is the var above
-               res.render("campgrounds/index", {campgrounds : allCampgrounds, currentUser : req.user, noMatch: noMatch});  
+               res.render("campgrounds/index", {campgrounds : allCampgrounds, currentUser : req.user, noMatch: noMatch, page: campgrounds});  
             }
         });
     
